@@ -160,7 +160,8 @@ namespace hwinfo_ns
     };
 
     /**
-     * @struct 网卡信息结构体
+     * @struct netinfo
+     * @brief 网卡信息结构体
      */
     struct Netinfo
     {
@@ -173,6 +174,10 @@ namespace hwinfo_ns
         std::string get_str();
     };
 
+    /**
+     * @struct audioinfo
+     * @brief 声卡信息结构体
+     */
     struct Audioinfo
     {
         std::string audio_model;
@@ -181,6 +186,10 @@ namespace hwinfo_ns
         std::string get_str();
     };
 
+    /**
+     * @struct displayinfo
+     * @brief 显示器信息结构体
+     */
     struct Displayinfo
     {
         std::string display_size;
@@ -215,6 +224,13 @@ namespace hwinfo_ns
         std::unique_ptr<std::string> net_info_str;
         std::unique_ptr<std::string> audio_info_str;
         std::unique_ptr<std::string> display_info_str;
+
+        /**
+         * @brief 获取PCI设备ID对应的厂商信息和型号信息
+         * @param id PCI设备ID
+         * @return std::string 厂商信息和型号信息
+         */
+        std::string get_pciids(std::string id);
     public:
         Hwinfo();
 

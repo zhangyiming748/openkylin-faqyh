@@ -40,6 +40,18 @@ OS：
 CPU：
 - /proc/cpuinfo
 
+GPU：
+- /sys/class/drm/card0/device/vendor
+- /sys/class/drm/card0/device/device
+
+
+内存：
+- /proc/meminfo
+
+硬盘：
+- /sys/block/<disk>/size
+
+
 整机
 - /sys/class/dmi/id/product_name 
 
@@ -68,6 +80,19 @@ faqyh
 ```
 
 按照提示输入即可。
+
+## 输出格式
+
+普通输出格式如下：
+
+```
+系统: openKylin 2.0 SP1
+CPU: 
+整机: Dell G15 5515
+网卡: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller
+内存: 16GB
+硬盘: 512GB
+```
 
 ## TODO
 

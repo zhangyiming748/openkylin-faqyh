@@ -11,7 +11,7 @@ Terminalscreen terminalscreen;
 
 void exit_signal_handler(int signum)
 {
-    std::cout << "Interrupt signal (" << signum << ") received.\n";
+    terminalscreen.enableEcho();
     terminalscreen.switchToMainScreen();
     exit(signum);
 }
@@ -47,6 +47,8 @@ int main(int argc, char **argv)
         }
 
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+
 
         if (formatChoice == 1)
         {
@@ -130,11 +132,20 @@ int main(int argc, char **argv)
 
 #pragma region 退出程序
 
+    // 为了能上下滚动查看终端输出，禁用回显
+    terminalscreen.disableEcho();
+
     logger.log("感谢使用FAQYH！");
     logger.log("再见！");
     logger.log("按回车退出程序...");
-    std::cin.get();
-
+    while (true)
+    {
+        if (std::cin.get() == '\n')
+        {
+            break;
+        }
+    }
+    terminalscreen.enableEcho();
     terminalscreen.switchToMainScreen();
 
 #pragma endregion

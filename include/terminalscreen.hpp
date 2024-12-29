@@ -32,6 +32,18 @@ public:
      * @return void
      */
     void switchToMainScreen();
+
+    /**
+     * @brief 关闭终端回显
+     * @return void
+     */
+    void disableEcho();
+
+    /**
+     * @brief 开启终端回显
+     * @return void
+     */
+    void enableEcho();
 };
 
 #endif // TERMINALSCREEN_HPP
