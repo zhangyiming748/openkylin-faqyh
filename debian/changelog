@@ -1,3 +1,9 @@
+faqyh (0.0.2) nile; urgency=medium
+
+  * 实现终端清屏切换功能
+
+ -- DSOE1024 <computerlub@163.com>  Mon, 30 Dec 2024 01:31:52 +0800
+
 faqyh (0.0.1) nile; urgency=medium
 
   * Initial release.

@@ -9,11 +9,111 @@
 namespace hwinfo_ns
 {
     Hwinfo::Hwinfo()
+        : product_info(std::make_unique<Productinfo>(get_product_info())),
+          os_info(std::make_unique<Osinfo>(get_os_info())),
+          cpu_info(std::make_unique<std::vector<Cpuinfo>>(get_cpu_info())),
+          gpu_info(std::make_unique<std::vector<Gpuinfo>>(get_gpu_info())),
+          ram_info(std::make_unique<Raminfo>(get_ram_info())),
+          disk_info(std::make_unique<std::vector<Diskinfo>>(get_disk_info())),
+          net_info(std::make_unique<std::vector<Netinfo>>(get_net_info()))
+          // TODO: audio_info, display_info
+
+
     {
+        // product_info = std::make_unique<Productinfo>(get_product_info());
+        // *product_info_str = product_info->get_str();
+
+        // os_info = std::make_unique<Osinfo>(get_os_info());
+        // *os_info_str = os_info->get_str();
+
+        // cpu_info = std::make_unique<std::vector<Cpuinfo>>(get_cpu_info());
+        // for (auto &cpu : *cpu_info)
+        // {
+        //     *cpu_info_str += cpu.get_str();
+        // }
+
+        // // gpu_info = std::make_unique<std::vector<Gpuinfo>>(get_gpu_info());
+        // // for (auto &gpu : *gpu_info)
+        // // {
+        // //     *gpu_info_str += gpu.get_str();
+        // // }
+
+        // ram_info = std::make_unique<Raminfo>(get_ram_info());
+        // *ram_info_str = ram_info->get_str();
+
+        // disk_info = std::make_unique<std::vector<Diskinfo>>(get_disk_info());
+        // for (auto &disk : *disk_info)
+        // {
+        //     *disk_info_str += disk.get_str();
+        // }
+
+        // net_info = std::make_unique<std::vector<Netinfo>>(get_net_info());
+        // for (auto &net : *net_info)
+        // {
+        //     *net_info_str += net.get_str();
+        // }
+
+        product_info_str = std::make_unique<std::string>(product_info->get_str());
+        os_info_str = std::make_unique<std::string>(os_info->get_str());
+
+        std::vector<Diskinfo> disk_info_vec = get_disk_info();
+        std::string disktmpstr;
+        for (auto &disk : disk_info_vec)
+        {
+            disktmpstr += disk.get_str();
+        }
+        disk_info_str.reset(new std::string(disktmpstr));
+
+
+
+        ram_info_str = std::make_unique<std::string>(ram_info->get_str());
+
+        std::vector<Netinfo> net_info_vec = get_net_info();
+        std::string nettmpstr;
+        for (auto &net : net_info_vec)
+        {
+            nettmpstr += net.get_str();
+        }
+        net_info_str.reset(new std::string(nettmpstr));
+
+
+
+
+        
+
+        // source_report = std::make_unique<std::string>(get_source_report());
     }
 
     Hwinfo::~Hwinfo()
     {
+    }
+
+    std::string Hwinfo::get_source_report()
+    {
+        // std::string str = *product_info_str + "\n";
+        // str += *os_info_str + "\n";
+        // str += *cpu_info_str + "\n";
+        // // str += *gpu_info_str + "\n";
+        // str += *ram_info_str + "\n";
+        // str += *disk_info_str + "\n";
+        // str += *net_info_str;
+
+        std::string tmp_product_info_str = *product_info_str;
+        std::string tmp_os_info_str = *os_info_str;
+        std::string tmp_ram_info_str = *ram_info_str;
+        std::string tmp_disk_info_str = *disk_info_str;
+        std::string tmp_net_info_str = *net_info_str;
+        // std::string tmp_audio_info_str;
+        // std::string tmp_display_info_str;
+
+        std::string str = tmp_product_info_str;
+        str += tmp_os_info_str + "\n";
+        str += tmp_ram_info_str + "\n";
+        str += tmp_disk_info_str + "\n";
+        str += tmp_net_info_str + "\n";
+
+        
+        return str;
     }
 
     std::string Productinfo::get_str()
@@ -29,6 +129,7 @@ namespace hwinfo_ns
             break;
         case ChassisType::OTHER:
             chassis_str = "";
+            break;
         default:
             chassis_str = "";
             break;
@@ -84,7 +185,7 @@ namespace hwinfo_ns
 
         return productInfo;
     }
-    #pragma endregion
+#pragma endregion
 
     std::string Osinfo::get_str()
     {
@@ -166,6 +267,11 @@ namespace hwinfo_ns
         return cpuInfos;
     }
 
+    std::string Gpuinfo::get_str()
+    {
+        return gpu_name;
+    }
+
     std::vector<Gpuinfo> Hwinfo::get_gpu_info()
     {
         // TODO: 获取显卡信息
@@ -223,7 +329,7 @@ namespace hwinfo_ns
             {
                 continue;
             }
-            std::cout << entry.path().filename().string() << std::endl;
+
             Diskinfo diskInfo;
             diskInfo.disk_name = entry.path().filename().string();
 
@@ -245,7 +351,7 @@ namespace hwinfo_ns
         return diskInfos;
     }
 
-    #pragma region 网卡信息
+#pragma region 网卡信息
 
     std::string Netinfo::get_str()
     {
@@ -270,14 +376,14 @@ namespace hwinfo_ns
                     std::string tmp;
                     vendorFile >> tmp;
                     // 去掉0x
-                    if (tmp[0] == '0' && tmp[1] == 'x'){
+                    if (tmp[0] == '0' && tmp[1] == 'x')
+                    {
                         tmp = tmp.substr(2);
                     }
                     // 加上^
                     tmp = "^" + tmp;
                     std::string command = "grep -i '" + tmp + "' /usr/share/hwdata/pci.ids"; // 获取网卡厂商信息
-                    //std::cout << command << std::endl;
-
+                    // std::cout << command << std::endl;
 
                     std::FILE *pipe = popen(command.c_str(), "r");
                     if (!pipe)
@@ -295,7 +401,6 @@ namespace hwinfo_ns
                         result = result.substr(0, result.find('\n'));
 
                         netInfo.net_vendor = result;
-
                     }
                     catch (...)
                     {
@@ -318,13 +423,13 @@ namespace hwinfo_ns
                     std::string modtmp;
                     modelFile >> modtmp;
                     // 去掉0x
-                    if (modtmp[0] == '0' && modtmp[1] == 'x'){
+                    if (modtmp[0] == '0' && modtmp[1] == 'x')
+                    {
                         modtmp = modtmp.substr(2);
                     }
 
                     std::string command = "grep -i '" + modtmp + "' /usr/share/hwdata/pci.ids"; // 获取网卡厂商信息
-                    std::cout << command << std::endl;
-
+                    // std::cout << command << std::endl;
 
                     std::FILE *pipe = popen(command.c_str(), "r");
                     if (!pipe)
@@ -337,7 +442,7 @@ namespace hwinfo_ns
                         {
                             result += buffer;
                         }
-                        std::cout << result << std::endl;
+                        // std::cout << result << std::endl;
 
                         // 只保留第一行
                         result = result.substr(0, result.find('\n'));
@@ -348,9 +453,7 @@ namespace hwinfo_ns
                         // 去掉ID，如果显示不全提issue
                         result = result.substr(6);
 
-
                         netInfo.net_model = result;
-
                     }
                     catch (...)
                     {
@@ -366,13 +469,12 @@ namespace hwinfo_ns
 
                 modelFile.close();
 
-
                 netInfos.push_back(netInfo);
             }
         }
         return netInfos;
     }
 
-    #pragma endregion
+#pragma endregion
 
 } // namespace hwinfo

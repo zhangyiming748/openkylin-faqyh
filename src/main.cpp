@@ -7,28 +7,42 @@
 
 using namespace hwinfo_ns;
 
+Terminalscreen terminalscreen;
+
+void exit_signal_handler(int signum)
+{
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
+    terminalscreen.switchToMainScreen();
+    exit(signum);
+}
+
 int main(int argc, char **argv)
 {
+    signal(SIGINT, exit_signal_handler);  // Ctrl+C
+    signal(SIGTERM, exit_signal_handler); // 终止信号
+
+    terminalscreen.switchToAlternateScreen();
+
     /**
      * @description: 负责终端输出
      */
-    Logger mainLogger;
+    Logger logger;
 
-    mainLogger.log("欢迎使用FAQYH！", log_level::INFO);
+    logger.log("欢迎使用FAQYH！", log_level::INFO);
 
 #pragma region 用户选择输出格式
     int formatChoice;
     while (true)
     {
-        mainLogger.log("请选择输出格式（输入数字按回车）：");
-        mainLogger.log("1. 适用于提交issue的Markdown格式");
-        mainLogger.log("2. 适用于在聊天软件上分享的普通文本格式");
+        logger.log("请选择输出格式（输入数字按回车）：");
+        logger.log("1. 适用于提交issue的Markdown格式");
+        logger.log("2. 适用于在聊天软件上分享的普通文本格式");
 
         if (!(std::cin >> formatChoice))
         {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            mainLogger.log("输入错误，请重新输入", log_level::ERROR);
+            logger.log("输入错误，请重新输入", log_level::ERROR);
             continue;
         }
 
@@ -36,96 +50,94 @@ int main(int argc, char **argv)
 
         if (formatChoice == 1)
         {
-            mainLogger.log("您选择了Markdown格式，将生成Markdown格式的硬件信息报告", log_level::WARNING);
+            logger.log("您选择了Markdown格式，将生成Markdown格式的硬件信息报告", log_level::WARNING);
             break;
         }
         else if (formatChoice == 2)
         {
-            mainLogger.log("你选择了普通文本格式", log_level::WARNING);
+            logger.log("你选择了普通文本格式", log_level::WARNING);
             break;
         }
         else
         {
-            mainLogger.log("输入错误，请重新输入", log_level::ERROR);
+            logger.log("输入错误，请重新输入", log_level::ERROR);
             continue;
         }
     }
 
 #pragma endregion
 
+#pragma region 获取硬件信息
     /**
      * @description: 获取硬件信息
      */
     Hwinfo hwinfo;
 
-    std::vector<Netinfo> netinfo = hwinfo.get_net_info();
+    std::string report = hwinfo.get_source_report();
+    logger.log(report, log_level::INFO);
 
-    for (auto &i : netinfo)
+    // logger.log(report, log_level::INFO);
+
+#pragma endregion
+
+#pragma region 格式化报告
+
+    // Markdown格式
+    if (formatChoice == 1)
     {
-        mainLogger.log(i.get_str(), log_level::INFO);
-    }
-
-    std::vector<Cpuinfo> info = hwinfo.get_cpu_info();
-    std::vector<Diskinfo> diskinfo = hwinfo.get_disk_info();
-    Osinfo osinfo = hwinfo.get_os_info();
-
-    Raminfo raminfo = hwinfo.get_ram_info();
-    mainLogger.log(raminfo.get_str(), log_level::INFO);
-
-    mainLogger.log(osinfo.get_str(), log_level::INFO);
-
-    Productinfo prod = hwinfo.get_product_info();
-
-    for (auto &i : info)
-    {
-        mainLogger.log(i.get_str(), log_level::INFO);
-    }
-    for (auto &i : diskinfo)
-    {
-        mainLogger.log(i.get_str(), log_level::INFO);
-    }
-
-    mainLogger.log(prod.get_str(), log_level::INFO);
-
-#pragma region 打开文件
-
-    mainLogger.log("文件已生成，是否打开？也可以稍后手动打开：");
-    mainLogger.log("1. 是", log_level::WARNING);
-    mainLogger.log("2. 否", log_level::ERROR);
-
-    int fileopenChoice;
-    while (true)
-    {
-        if (!(std::cin >> fileopenChoice))
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            mainLogger.log("输入错误，请重新输入", log_level::ERROR);
-            continue;
-        }
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        if (fileopenChoice == 1)
-        {
-            mainLogger.log("打开文件", log_level::INFO);
-            // 调用Linux命令打开文件
-            system("xdg-open");
-        }
-        else if (fileopenChoice == 2)
-        {
-            mainLogger.log("稍后可以手动打开文件");
-        }
-        else
-        {
-            mainLogger.log("输入错误，请重新输入", log_level::ERROR);
-            continue;
-        }
     }
 
 #pragma endregion
 
-    mainLogger.log("感谢使用FAQYH！");
+#pragma region 打开文件（待实现）
+    // TODO: 打开文件
+
+    //     logger.log("报告文件已生成，是否打开？也可以稍后手动打开：");
+    //     logger.log("1. 是", log_level::WARNING);
+    //     logger.log("2. 否", log_level::ERROR);
+
+    //     int fileopenChoice;
+    //     while (true)
+    //     {
+    //         if (!(std::cin >> fileopenChoice))
+    //         {
+    //             std::cin.clear();
+    //             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    //             logger.log("输入错误，请重新输入", log_level::ERROR);
+    //             continue;
+    //         }
+
+    //         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    //         if (fileopenChoice == 1)
+    //         {
+    //             logger.log("打开文件", log_level::INFO);
+    //             // 调用Linux命令打开文件
+    //             system("xdg-open");
+    //         }
+    //         else if (fileopenChoice == 2)
+    //         {
+    //             logger.log("稍后可以手动打开文件");
+    //         }
+    //         else
+    //         {
+    //             logger.log("输入错误，请重新输入", log_level::ERROR);
+    //             continue;
+    //         }
+    //     }
+
+#pragma endregion
+
+#pragma region 退出程序
+
+    logger.log("感谢使用FAQYH！");
+    logger.log("再见！");
+    logger.log("按回车退出程序...");
+    std::cin.get();
+
+    terminalscreen.switchToMainScreen();
+
+#pragma endregion
 
     return 0;
 }

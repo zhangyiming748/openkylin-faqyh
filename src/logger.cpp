@@ -1,3 +1,8 @@
+/**
+ * @file logger.cpp
+ * @brief 日志类实现
+ * @author DSOE1024
+ */
 #include "logger.hpp"
 
 Logger::Logger(){

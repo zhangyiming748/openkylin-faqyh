@@ -15,3 +15,4 @@ CMakePresets.json
 /build
 /out
 /obj-x86_64-linux-gnu
+.vscode

@@ -10,8 +10,10 @@
 
 #include "iostream"
 #include "limits"
+#include "filesystem"
+#include "csignal"
 #include "logger.hpp"
 #include "hwinfo.hpp"
-#include "filesystem"
+#include "terminalscreen.hpp"
 
 #endif

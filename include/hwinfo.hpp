@@ -78,7 +78,7 @@ namespace hwinfo_ns
          */
         std::string get_str();
     };
-    
+
     /**
      * @struct cpuinfo
      * @brief CPU信息结构体
@@ -159,7 +159,6 @@ namespace hwinfo_ns
         std::string get_str();
     };
 
-    
     /**
      * @struct 网卡信息结构体
      */
@@ -196,11 +195,36 @@ namespace hwinfo_ns
     class Hwinfo
     {
     private:
+        std::unique_ptr<Productinfo> product_info;
+        std::unique_ptr<Osinfo> os_info;
+        std::unique_ptr<std::vector<Cpuinfo>> cpu_info;
+        std::unique_ptr<std::vector<Gpuinfo>> gpu_info;
+        std::unique_ptr<Raminfo> ram_info;
+        std::unique_ptr<std::vector<Diskinfo>> disk_info;
+        std::unique_ptr<std::vector<Netinfo>> net_info;
+        
+        // TODO: audio_info, display_info
 
+        std::unique_ptr<std::string> source_report;
+        std::unique_ptr<std::string> product_info_str;
+        std::unique_ptr<std::string> os_info_str;
+        std::unique_ptr<std::string> cpu_info_str;
+        std::unique_ptr<std::string> gpu_info_str;
+        std::unique_ptr<std::string> ram_info_str;
+        std::unique_ptr<std::string> disk_info_str;
+        std::unique_ptr<std::string> net_info_str;
+        std::unique_ptr<std::string> audio_info_str;
+        std::unique_ptr<std::string> display_info_str;
     public:
         Hwinfo();
 
         ~Hwinfo();
+
+        /**
+         * @brief 获取源报告
+         * @return std::string 源报告文本
+         */
+        std::string get_source_report();
 
         /**
          * @brief 获取产品信息
@@ -243,6 +267,8 @@ namespace hwinfo_ns
          * @return std::vector<netinfo> 网卡信息列表
          */
         std::vector<Netinfo> get_net_info();
+
+        // TODO: audio_info, display_info
     };
 
 } // namespace hwinfo_ns

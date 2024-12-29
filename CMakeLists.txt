@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(faqyh VERSION 0.0.1 LANGUAGES C CXX)
+project(faqyh VERSION 0.0.2 LANGUAGES C CXX)
 message(STATUS "Project version: ${PROJECT_VERSION}")
 set (CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
 ${PROJECT_SOURCE_DIR}/src/main.cpp 
 ${PROJECT_SOURCE_DIR}/src/logger.cpp 
 ${PROJECT_SOURCE_DIR}/src/hwinfo.cpp 
-${PROJECT_SOURCE_DIR}/src/formatter.cpp)
+${PROJECT_SOURCE_DIR}/src/formatter.cpp
+${PROJECT_SOURCE_DIR}/src/terminalscreen.cpp)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

@@ -1,3 +1,8 @@
+/**
+ * @file logger.hpp
+ * @brief 日志类
+ * @author DSOE1024
+ */
 #pragma once
 
 #ifndef LOGGER_HPP
