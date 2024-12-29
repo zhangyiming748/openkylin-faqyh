@@ -1,0 +1,12 @@
+Source: faqyh
+Section: devel
+Priority: optional
+Maintainer: DSOE1024 <computerlub@163.com>
+Build-Depends: cmake, debhelper (>= 9)
+Standards-Version: 0.0.1
+Homepage: https://gitee.com/openkylin/faqyh
+
+Package: faqyh
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: 一个简单的硬件信息收集工具，用于收集计算机硬件信息，包括CPU、内存、硬盘、网卡等关键硬件信息，并生成一个简单的报告。
