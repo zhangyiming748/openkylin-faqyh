@@ -122,7 +122,7 @@ namespace hwinfo_ns
         // std::string tmp_audio_info_str;
         // std::string tmp_display_info_str;
 
-        std::string str = tmp_product_info_str;
+        std::string str = "";
         str += "\n";
         str += "设备：";
         str += tmp_product_info_str + "\n";

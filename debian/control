@@ -3,7 +3,7 @@ Section: devel
 Priority: optional
 Maintainer: DSOE1024 <computerlub@163.com>
 Build-Depends: cmake, debhelper (>= 9)
-Standards-Version: 0.0.4
+Standards-Version: 0.0.5
 Homepage: https://gitee.com/openkylin/faqyh
 
 Package: faqyh

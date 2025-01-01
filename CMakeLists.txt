@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(faqyh VERSION 0.0.4 LANGUAGES C CXX)
+project(faqyh VERSION 0.0.5 LANGUAGES C CXX)
 
 if(!CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
     message(FATAL_ERROR "This project only supports Linux")
