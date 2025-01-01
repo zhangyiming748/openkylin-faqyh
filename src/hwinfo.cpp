@@ -32,17 +32,34 @@ namespace hwinfo_ns
 
         std::vector<Gpuinfo> gpu_info_vec = get_gpu_info();
         std::string gputmpstr;
-        for (auto &gpu : gpu_info_vec)
+        if (gpu_info_vec.size() == 0)
         {
-            gputmpstr += gpu.get_str();
+            gputmpstr = "没有找到GPU信息";
+        }
+        else
+        {
+            for (int i = 0; i < gpu_info_vec.size(); i++)
+            {
+                gputmpstr += "GPU" + std::to_string(i + 1) + ": ";
+                gputmpstr += gpu_info_vec[i].get_str();
+                if (i != gpu_info_vec.size() - 1)
+                {
+                    gputmpstr += "\n";
+                }
+            }
         }
         gpu_info_str.reset(new std::string(gputmpstr));
 
         std::vector<Diskinfo> disk_info_vec = get_disk_info();
         std::string disktmpstr;
-        for (auto &disk : disk_info_vec)
+        for (int i = 0; i < disk_info_vec.size(); i++)
         {
-            disktmpstr += disk.get_str();
+            disktmpstr += "磁盘" + std::to_string(i + 1) + ": ";
+            disktmpstr += disk_info_vec[i].get_str();
+            if (i != disk_info_vec.size() - 1)
+            {
+                disktmpstr += "\n";
+            }
         }
         disk_info_str.reset(new std::string(disktmpstr));
 
@@ -50,9 +67,14 @@ namespace hwinfo_ns
 
         std::vector<Netinfo> net_info_vec = get_net_info();
         std::string nettmpstr;
-        for (auto &net : net_info_vec)
+        for (int i = 0; i < net_info_vec.size(); i++)
         {
-            nettmpstr += net.get_str();
+            nettmpstr += "网卡" + std::to_string(i + 1) + ": ";
+            nettmpstr += net_info_vec[i].get_str();
+            if (i != net_info_vec.size() - 1)
+            {
+                nettmpstr += "\n";
+            }
         }
         net_info_str.reset(new std::string(nettmpstr));
 
@@ -101,11 +123,20 @@ namespace hwinfo_ns
         // std::string tmp_display_info_str;
 
         std::string str = tmp_product_info_str;
+        str += "\n";
+        str += "设备：";
+        str += tmp_product_info_str + "\n";
+        str += "操作系统：";
         str += tmp_os_info_str + "\n";
+        str += "CPU设备：";
         str += tmp_cpu_info_str + "\n";
+        str += "GPU设备： \n";
         str += tmp_gpu_info_str + "\n";
+        str += "内存设备：";
         str += tmp_ram_info_str + "\n";
+        str += "磁盘设备：\n";
         str += tmp_disk_info_str + "\n";
+        str += "网卡设备：\n";
         str += tmp_net_info_str + "\n";
 
         return str;
@@ -182,9 +213,13 @@ namespace hwinfo_ns
     }
 #pragma endregion
 
+#pragma region 操作系统信息
     std::string Osinfo::get_str()
     {
         std::string str = os_name_version;
+        str += "\n";
+        str += "内核版本：";
+        str += os_kernel_version;
         return str;
     }
 
@@ -210,8 +245,39 @@ namespace hwinfo_ns
             }
             infile.close();
         }
+        else
+        {
+            osInfo.os_name_version = "无法获取操作系统信息";
+        }
+
+        // 从 /proc/version 读取内核版本
+        std::ifstream infile2("/proc/version");
+        if (infile2.is_open())
+        {
+            std::string line;
+            if (getline(infile2, line))
+            {
+                size_t start = line.find("Linux") + 14;
+                size_t end = line.find("(");
+                osInfo.os_kernel_version = line.substr(start, end - start);
+            }
+            else
+            {
+                osInfo.os_kernel_version = "无法获取内核版本";
+            }
+            infile2.close();
+        }
+        else
+        {
+            osInfo.os_kernel_version = "无法打开/proc/version文件";
+        }
+
         return osInfo;
     }
+
+#pragma endregion
+
+#pragma region CPU信息
 
     std::string Cpuinfo::get_str()
     {
@@ -222,16 +288,18 @@ namespace hwinfo_ns
     std::vector<Cpuinfo> Hwinfo::get_cpu_info()
     {
         std::vector<Cpuinfo> cpuInfos;
+        Cpuinfo cpuInfo;
 
         std::ifstream file("/proc/cpuinfo");
         if (!file.is_open())
         {
-            std::cerr << "Failed to open /proc/cpuinfo" << std::endl;
+            cpuInfo.cpu_model = "无法打开/proc/cpuinfo文件";
+            cpuInfo.cpu_cores = "未知";
+            cpuInfo.cpu_threads = "未知";
             return cpuInfos;
         }
 
         std::string line;
-        Cpuinfo cpuInfo;
 
         // TODO: 民用一台电脑一般只有一个cpu，只考虑一个CPU的情况，未来修改
 
@@ -262,6 +330,10 @@ namespace hwinfo_ns
         return cpuInfos;
     }
 
+#pragma endregion
+
+#pragma region GPU信息
+
     std::string Gpuinfo::get_str()
     {
         return gpu_name;
@@ -291,71 +363,76 @@ namespace hwinfo_ns
                     if (infile1.is_open() && infile2.is_open())
                     {
                         std::string line1, line2;
-                        std::getline(infile1, line1);
-                        std::getline(infile2, line2);
-
-                        Gpuinfo gpuInfo;
-
-                        std::string vtmp = line1;
-                        // 去掉0x
-                        if (vtmp[0] == '0' && vtmp[1] == 'x')
+                        if (std::getline(infile1, line1), std::getline(infile2, line2))
                         {
-                            vtmp = vtmp.substr(2);
+                            Gpuinfo gpuInfo;
+                            std::string vtmp = line1;
+                            // 去掉0x
+                            if (vtmp[0] == '0' && vtmp[1] == 'x')
+                            {
+                                vtmp = vtmp.substr(2);
+                            }
+                            // 加上^
+                            vtmp = "^" + vtmp;
+                            std::string v_result = get_pciids(vtmp);
+
+                            v_result = v_result.substr(6);
+                            v_result = v_result.substr(0, v_result.find('\n'));
+
+                            infile1.close();
+
+                            std::string dtmp = line2;
+
+                            // 去掉0x
+                            if (dtmp[0] == '0' && dtmp[1] == 'x')
+                            {
+                                dtmp = dtmp.substr(2);
+                            }
+
+                            std::string m_result = get_pciids(dtmp);
+
+                            // 在m_result中找到带有GeForce或者 Radeon 或者 Iris的字符串
+                            if (m_result.find("GeForce") != std::string::npos)
+                            {
+                                m_result = m_result.substr(m_result.find("GeForce") - 6, m_result.find('\n'));
+                            }
+                            // TODO: 没测试过AMD显卡
+                            else if (m_result.find("Radeon") != std::string::npos)
+                            {
+                                m_result = m_result.substr(m_result.find("Radeon"));
+                            }
+                            // TODO: 没测试过Intel显卡
+                            else if (m_result.find("Iris") != std::string::npos)
+                            {
+                                m_result = m_result.substr(m_result.find("Iris"));
+                            }
+
+                            // TODO: 更多显卡型号
+
+                            // 只保留第一行
+                            m_result = m_result.substr(0, m_result.find('\n'));
+
+                            // 去掉前面的空格
+                            m_result = m_result.substr(m_result.find_first_not_of(" \t\n\r\f\v"));
+
+                            // 去掉结尾的]
+                            m_result = m_result.substr(0, m_result.find_last_not_of("]") + 1);
+
+                            // 去掉ID，如果显示不全提issue
+                            m_result = m_result.substr(6);
+
+                            infile2.close();
+
+                            gpuInfo.gpu_name = v_result + " " + m_result;
+
+                            gpuInfos.push_back(gpuInfo);
                         }
-                        // 加上^
-                        vtmp = "^" + vtmp;
-                        std::string v_result = get_pciids(vtmp);
-
-                        v_result = v_result.substr(6);
-                        v_result = v_result.substr(0, v_result.find('\n'));
-
-
-                        infile1.close();
-
-                        std::string dtmp = line2;
-
-                        
-                        // 去掉0x
-                        if (dtmp[0] == '0' && dtmp[1] == 'x')
+                        else
                         {
-                            dtmp = dtmp.substr(2);
+                            Gpuinfo gpuInfo;
+                            gpuInfo.gpu_name = "无法打开显卡信息文件";
+                            gpuInfos.push_back(gpuInfo);
                         }
-
-                        std::string m_result = get_pciids(dtmp);
-
-                        // 在m_result中找到带有GeForce或者 Radeon 或者 Iris的字符串
-                        if (m_result.find("GeForce") != std::string::npos)
-                        {
-                            m_result = m_result.substr(m_result.find("GeForce") - 6, m_result.find('\n'));
-                        }
-                        // TODO: 没测试过AMD显卡
-                        else if (m_result.find("Radeon") != std::string::npos)
-                        {
-                            m_result = m_result.substr(m_result.find("Radeon"));
-                        }
-                        // TODO: 没测试过Intel显卡
-                        else if (m_result.find("Iris") != std::string::npos)
-                        {
-                            m_result = m_result.substr(m_result.find("Iris"));
-                        }
-
-                        // TODO: 更多显卡型号
-
-                        // 只保留第一行
-                        m_result = m_result.substr(0, m_result.find('\n'));
-
-                        // 去掉前面的空格
-                        m_result = m_result.substr(m_result.find_first_not_of(" \t\n\r\f\v"));
-
-
-                        // 去掉ID，如果显示不全提issue
-                        m_result = m_result.substr(6);
-
-                        infile2.close();
-
-                        gpuInfo.gpu_name = v_result + " " + m_result;
-
-                        gpuInfos.push_back(gpuInfo);
                     }
                 }
             }
@@ -363,6 +440,10 @@ namespace hwinfo_ns
 
         return gpuInfos;
     }
+
+#pragma endregion
+
+#pragma region 内存信息
 
     std::string Raminfo::get_str()
     {
@@ -397,6 +478,10 @@ namespace hwinfo_ns
         }
         return ramInfo;
     }
+
+#pragma endregion
+
+#pragma region 磁盘信息
 
     std::string Diskinfo::get_str()
     {
@@ -436,6 +521,8 @@ namespace hwinfo_ns
 
         return diskInfos;
     }
+
+#pragma endregion
 
 #pragma region 网卡信息
 
@@ -519,5 +606,11 @@ namespace hwinfo_ns
     }
 
 #pragma endregion
+
+    std::vector<Audioinfo> Hwinfo::get_audio_info()
+    {
+        // TODO: 获取音频信息
+        return std::vector<Audioinfo>();
+    }
 
 } // namespace hwinfo

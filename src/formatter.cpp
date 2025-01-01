@@ -17,12 +17,12 @@ namespace formatter
 
     std::string Formatter::format_text(const std::string &source)
     {
-
+        return source;
     }
 
     std::string Formatter::format_markdown(const std::string &source)
     {
-
+        return source;
     }
 
     std::string Formatter::format_to_string(const std::string &source, FormatType type)
@@ -30,13 +30,16 @@ namespace formatter
         switch (type)
         {
         case FormatType::Text:
-            /* code */
+            return format_text(source);
             break;
         case FormatType::Markdown:
-            /* code */
+            return format_markdown(source);
             break;
         default:
+            return source;
             break;
         }
+
+        // return source;
     }
 }

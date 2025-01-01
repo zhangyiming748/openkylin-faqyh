@@ -39,6 +39,10 @@ namespace hwinfo_ns
         OTHER
     };
 
+    /**
+     * @struct productinfo
+     * @brief 产品信息结构体
+     */
     struct Productinfo
     {
         /**
@@ -72,6 +76,11 @@ namespace hwinfo_ns
          * @brief 操作系统名称+版本
          */
         std::string os_name_version;
+
+        /**
+         * @brief 操作系统内核版本
+         */
+        std::string os_kernel_version;
 
         /**
          * @brief 将操作系统信息转换为字符串
@@ -165,7 +174,14 @@ namespace hwinfo_ns
      */
     struct Netinfo
     {
+        /**
+         * @brief 网卡型号
+         */
         std::string net_model;
+
+        /**
+         * @brief 网卡供应商
+         */
         std::string net_vendor;
 
         /**
@@ -180,9 +196,19 @@ namespace hwinfo_ns
      */
     struct Audioinfo
     {
+        /**
+         * @brief 声卡型号
+         */
         std::string audio_model;
+
+        /**
+         * @brief 声卡供应商
+         */
         std::string audio_vendor;
 
+        /**
+         * @brief 将声卡信息转换为字符串
+         */
         std::string get_str();
     };
 
@@ -211,8 +237,9 @@ namespace hwinfo_ns
         std::unique_ptr<Raminfo> ram_info;
         std::unique_ptr<std::vector<Diskinfo>> disk_info;
         std::unique_ptr<std::vector<Netinfo>> net_info;
+        std::unique_ptr<std::vector<Audioinfo>> audio_info;
         
-        // TODO: audio_info, display_info
+        // TODO: display_info
 
         std::unique_ptr<std::string> source_report;
         std::unique_ptr<std::string> product_info_str;
@@ -284,7 +311,14 @@ namespace hwinfo_ns
          */
         std::vector<Netinfo> get_net_info();
 
-        // TODO: audio_info, display_info
+        /**
+         * @brief 获取声卡信息
+         * @return std::vector<audioinfo> 声卡信息列表
+         */
+        std::vector<Audioinfo> get_audio_info();
+
+
+        // TODO: display_info
     };
 
 } // namespace hwinfo_ns

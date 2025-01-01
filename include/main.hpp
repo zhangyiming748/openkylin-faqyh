@@ -15,5 +15,6 @@
 #include "logger.hpp"
 #include "hwinfo.hpp"
 #include "terminalscreen.hpp"
+#include "formatter.hpp"
 
 #endif
