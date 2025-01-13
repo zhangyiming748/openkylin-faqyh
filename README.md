@@ -47,7 +47,6 @@ sudo apt install faqyh
 ### 通过源码构建并安装
 
 ```bash
-git clone https://gitee.com/openkylin/faqyh
 cd faqyh
 mkdir build
 cd build
