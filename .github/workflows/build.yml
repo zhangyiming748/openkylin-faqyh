@@ -1,4 +1,4 @@
-name: Gitee to GitHub Sync
+name: build and run
 
 on:
   # schedule:
@@ -16,14 +16,14 @@ jobs:
           ref: gitee-sync  # 确保检出 gitee-sync 分支
       - name: Set up dependencies
         run: |
-          apt install xsel wl-clipboard build-essential cmake debhelper -y
+          sudo apt install xsel wl-clipboard build-essential cmake debhelper -y
       - name: build an install
         run: |
           mkdir build
           cd build
           cmake ..
           make
-          make install
+          sudo make install
       - name: run
         run: |
           faqyh
