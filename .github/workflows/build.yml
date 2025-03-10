@@ -17,7 +17,7 @@ jobs:
       - name: Set up dependencies
         run: |
           sudo apt install xsel wl-clipboard build-essential cmake debhelper -y
-      - name: build an install
+      - name: build
         run: |
           mkdir build
           cd build
@@ -25,6 +25,7 @@ jobs:
           make
       - name: install
         run: |
+          cd build
           sudo make install
       - name: run
         run: |
