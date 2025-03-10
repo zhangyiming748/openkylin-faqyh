@@ -26,7 +26,11 @@ jobs:
           dpkg-buildpackage -S -nc --no-sign
           dpkg-buildpackage -us -uc -b
           dh clean
-          sudo dpkg -i ../faqyh_xxx_amd64.deb
-      - name: run
-        run: |
-          faqyh
+          sudo dpkg -i ../faqyh_*.deb
+      - name: Upload DEB package
+        uses: actions/upload-artifact@v3
+        with:
+          name: faqyh-package
+          path: faqyh_*.deb
+          retention-days: 7
+
