@@ -24,8 +24,8 @@ jobs:
           dpkg-buildpackage -S -nc --no-sign
           dpkg-buildpackage -us -uc -b
           dh clean
-          tree $GITHUB_WORKSPACE
-          find / -name "*.deb" -print
+          # 移动上层目录的 deb 文件到当前工作目录
+          mv ../*.deb .
 
       - name: Upload DEB package
         uses: actions/upload-artifact@v4
