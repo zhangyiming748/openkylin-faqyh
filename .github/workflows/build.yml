@@ -23,6 +23,8 @@ jobs:
           cd build
           cmake ..
           make
+      - name: install
+        run: |
           sudo make install
       - name: run
         run: |
