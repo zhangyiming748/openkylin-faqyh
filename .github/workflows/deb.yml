@@ -24,8 +24,8 @@ jobs:
           dpkg-buildpackage -S -nc --no-sign
           dpkg-buildpackage -us -uc -b
           dh clean
-          pwd
           tree $GITHUB_WORKSPACE
+          find / -name "*.deb" -print
 
       - name: Upload DEB package
         uses: actions/upload-artifact@v4
