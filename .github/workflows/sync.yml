@@ -13,17 +13,16 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # 获取所有历史记录
+          ref: gitee-sync  # 确保检出 gitee-sync 分支
 
       - name: Set up Git
         run: |
-          git config --global user.name "zhangyiming748"  # 修改为你的 GitHub 用户名
-          git config --global user.email "zhangyiming748@gmail.com"  # 修改为你的 GitHub 邮箱
+          git config --global user.name "zhangyiming748"
+          git config --global user.email "zhangyiming748@gmail.com"
 
-      - name: Pull from Gitee
+      - name: Pull from Gitee and Push to GitHub
         run: |
-          git remote add gitee "https://gitee.com/openkylin/faqyh.git"  # 修改为原 Gitee 仓库的地址
-          git pull gitee master  # 修改为 Gitee 仓库的分支名，通常是 main 或 master
-
-      - name: Push to GitHub
-        run: |
-          git push origin gitee-sync  --force  # 强制推送，保持完全同步
+          git remote add gitee https://gitee.com/openkylin/faqyh.git
+          git fetch gitee master
+          git reset --hard gitee/master
+          git push origin gitee-sync --force
