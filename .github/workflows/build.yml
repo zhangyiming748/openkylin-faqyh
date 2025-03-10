@@ -6,7 +6,7 @@ on:
   workflow_dispatch:  # 允许手动触发
 
 jobs:
-  sync:
+  build-and-run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

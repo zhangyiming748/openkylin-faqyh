@@ -1,36 +1,33 @@
-name: make a deb package
+name: build and run
 
 on:
   # schedule:
-  #   - cron: '0 0 * * *'  # 每天 00:00 运行一次，主人可以根据需要调整时间
-  workflow_dispatch:  # 允许手动触发
+  #   - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
-  sync:
+  build-deb:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 获取所有历史记录
-          ref: gitee-sync  # 确保检出 gitee-sync 分支
+          fetch-depth: 0
+          ref: gitee-sync
+
       - name: Set up dependencies
         run: |
           sudo apt install xsel wl-clipboard build-essential cmake debhelper -y
-      - name: build an install
+
+      - name: deb
         run: |
-          mkdir build
-          cd build
-          cmake ..
-          make
           dpkg-buildpackage -S -nc --no-sign
           dpkg-buildpackage -us -uc -b
           dh clean
-          sudo dpkg -i ../faqyh_*.deb
+
       - name: Upload DEB package
         uses: actions/upload-artifact@v4
         with:
           name: faqyh-package
-          path: faqyh_*.deb
+          path: "*.deb"
           retention-days: 7
-
