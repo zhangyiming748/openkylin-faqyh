@@ -1,0 +1,29 @@
+name: Gitee to GitHub Sync
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 00:00 运行一次，主人可以根据需要调整时间
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 获取所有历史记录
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "zhangyiming748"  # 修改为你的 GitHub 用户名
+          git config --global user.email "zhangyiming748@gmail.com"  # 修改为你的 GitHub 邮箱
+
+      - name: Pull from Gitee
+        run: |
+          git remote add gitee "https://gitee.com/openkylin/faqyh.git"  # 修改为原 Gitee 仓库的地址
+          git pull gitee master  # 修改为 Gitee 仓库的分支名，通常是 main 或 master
+
+      - name: Push to GitHub
+        run: |
+          git push origin gitee-sync  --force  # 强制推送，保持完全同步
