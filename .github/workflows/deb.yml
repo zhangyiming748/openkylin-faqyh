@@ -17,13 +17,15 @@ jobs:
 
       - name: Set up dependencies
         run: |
-          sudo apt install xsel wl-clipboard build-essential cmake debhelper -y
+          sudo apt install xsel wl-clipboard build-essential cmake debhelper tree -y
 
       - name: deb
         run: |
           dpkg-buildpackage -S -nc --no-sign
           dpkg-buildpackage -us -uc -b
           dh clean
+          pwd
+          tree $GITHUB_WORKSPACE
 
       - name: Upload DEB package
         uses: actions/upload-artifact@v4
